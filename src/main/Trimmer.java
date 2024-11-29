@@ -20,17 +20,7 @@ public class Trimmer implements Runnable{
 
         while (!monitor.isReadyToFinish()){
             //System.out.println(threadName + ": Buscando imagen para recortar.");
-            Image img = monitor.startTrimming();
 
-            // Si no hay imagenes para recortar, terminar
-            if (img == null)
-                break;
-
-            //System.out.println(threadName + ": Inciando recorte.");
-
-            img.trim();
-            monitor.finishTrim(img);
-            // System.out.println(threadName + ": Imagen recortada exitosamente.");
             counter++;
         }
     }

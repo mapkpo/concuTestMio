@@ -19,12 +19,6 @@ public class Creator implements Runnable{
         threadName = Thread.currentThread().getName();
         System.out.printf("%s inicializado\n", threadName);
 
-        while (!monitor.isReadyToFinish() && counter.get() < maxAmmount){
-            counter.incrementAndGet();
-            //Espera a poder tomar control del mutex del monitor para agregar la imagen al contenedor P0.
-            monitor.addImage(new Image());
-            //System.out.println(threadName + ": Nueva imagen creada con éxito.");
-        }
     }
 
     public int getCounter(){
