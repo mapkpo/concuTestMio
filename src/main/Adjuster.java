@@ -3,11 +3,9 @@ package main;
 public class Adjuster implements Runnable{
     final Monitor monitor;
     String threadName;
-    private int counter;
 
     public Adjuster(Monitor monitor) {
         this.monitor = monitor;
-        counter = 0;
     }
 
     @Override
@@ -15,14 +13,13 @@ public class Adjuster implements Runnable{
         threadName = Thread.currentThread().getName();
         System.out.printf("%s inicializado\n", threadName);
 
-
-
-
-            counter++;
-    }
-    
-
-    public int getCounter(){
-        return counter;
+        while (!monitor.isReadyToFinish()){
+            monitor.fireTransition(5);
+            monitor.fireTransition(6);
+            monitor.fireTransition(7);
+            monitor.fireTransition(8);
+            monitor.fireTransition(9);
+            monitor.fireTransition(10);
+        }
     }
 }

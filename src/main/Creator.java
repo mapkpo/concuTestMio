@@ -19,6 +19,10 @@ public class Creator implements Runnable{
         threadName = Thread.currentThread().getName();
         System.out.printf("%s inicializado\n", threadName);
 
+        while (!monitor.isReadyToFinish() && counter.get() < maxAmmount){
+            monitor.fireTransition(0);
+            counter.incrementAndGet();
+        }
     }
 
     public int getCounter(){

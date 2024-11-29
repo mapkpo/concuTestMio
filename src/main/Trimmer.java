@@ -1,15 +1,11 @@
 package main;
 
-//import java.util.concurrent.TimeUnit;
-
 public class Trimmer implements Runnable{
     final Monitor monitor;
     String threadName;
-    private int counter;
 
     public Trimmer(Monitor monitor) {
         this.monitor = monitor;
-        counter = 0;
     }
 
     @Override
@@ -19,13 +15,10 @@ public class Trimmer implements Runnable{
         System.out.printf("%s inicializado\n", threadName);
 
         while (!monitor.isReadyToFinish()){
-            //System.out.println(threadName + ": Buscando imagen para recortar.");
-
-            counter++;
+            monitor.fireTransition(11);
+            monitor.fireTransition(12);
+            monitor.fireTransition(13);
+            monitor.fireTransition(14);
         }
-    }
-
-    public int getCounter(){
-        return counter;
     }
 }

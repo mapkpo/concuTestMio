@@ -26,7 +26,7 @@ public class Monitor {
     }
 
 
-    public void fireTransition(){
+    public void fireTransition(int t){
 
     }
 
@@ -36,5 +36,14 @@ public class Monitor {
 
     public String getSecuence(){
         return petri.getSequence();
+    }
+
+    public void finish(){
+        allInvariantsCompleted = true;
+        getMutex();
+        //System.out.println("Programa finalizado con: " + getBufferExported() + " invariantes");
+        petri.printCounter();
+        mutex.release();
+        //System.out.print(petri.getSecuencia());
     }
 }
