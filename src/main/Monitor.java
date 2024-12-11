@@ -1,49 +1,65 @@
 package main;
-import java.util.concurrent.Semaphore;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Monitor {
-    final private Rdp petri;
-    final private Semaphore mutex;
-  
-    private boolean allInvariantsCompleted = false; //bandera para parar hilos
+    private final Rdp rdp;
+    private final ReentrantLock mutex;
+    private boolean allInvariantsCompleted;
+    private Policy policy;
 
-    public Monitor(Policy _policy){
-        petri = new Rdp();
-        mutex = new Semaphore(1, true);
+    public Monitor(Rdp rdp, Policy policy) {
+        this.rdp = rdp;
+        this.mutex = new ReentrantLock();
+        allInvariantsCompleted = false;
+        this.policy = policy;
     }
 
-    /* Tries to acquire the mutex. */
-    private void enterMonitor() {
-        try{
-            mutex.acquire();
-        } catch (InterruptedException e){
-            System.out.println("Monitor: interrupted while trying to acquire mutex: " + e);
+    //public Boolean fireTransition(int transition) {
+    public Boolean fireTransition(List<Integer> transitions) {
+        mutex.lock();
+        finish(); 
+        try {
+            //aca hay problema xddddd
+            List<Integer> toTry = rdp.whichEnabled();
+            System.out.println("las enableadas "+ toTry.size());
+
+            for (int i=0; i<toTry.size(); i++){
+                System.out.println(toTry.get(i));
+            }
+
+            toTry.retainAll(transitions);
+
+            int number = policy.decide(toTry);
+            System.out.println("aca ta la cagá "+number);
+
+            if (rdp.isEnabled(number)) {
+                System.out.println("Firing transition: T" + number);
+                rdp.fire(number);
+                return true;
+            } else {
+                System.out.println("Transition T" + number + " is not enabled.");
+                return false;
+            }
+        } finally {
+            mutex.unlock(); 
         }
     }
 
-    private void exitMonitor(){
-        mutex.release();
+    private void finish(){
+        if (rdp.completedInvariants()){
+            allInvariantsCompleted = true;
+            System.out.println(rdp.getSequence());
+        }
     }
 
-
-    public void fireTransition(int t){
-
-    }
-
-    public boolean isReadyToFinish(){
+    public boolean areInvariantsCompleted() {
         return allInvariantsCompleted;
     }
 
-    public String getSecuence(){
-        return petri.getSequence();
+    public Rdp getRdp(){
+        return rdp;
     }
 
-    public void finish(){
-        enterMonitor();
-        allInvariantsCompleted = true;
-        //System.out.println("Programa finalizado con: " + getBufferExported() + " invariantes");
-        petri.printCounter();
-        mutex.release();
-        //System.out.print(petri.getSecuencia());
-    }
 }

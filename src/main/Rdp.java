@@ -42,26 +42,33 @@ public class Rdp {
     private final double[] transitionMatrix = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     List<Integer> transitionSleepTime = Collections.unmodifiableList
-            (Arrays.asList(100, 0, 0, 100, 100, 0, 0, 100, 100, 100, 100, 0, 0, 100, 100, 0, 100));
+            (Arrays.asList(0, 0, 0, 100, 100, 0, 0, 100, 100, 100, 100, 0, 0, 100, 100, 0, 100));
 
     private final long[] transitionTime = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    private final int[] firedCount = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    private int[] firedCount = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     private String sequence = "";
 
-    public Rdp() {
+    private int maxInvariant;
+
+    public Rdp(int max) {
         //-1 significa que la transicion no esta sensibilizada por lo que el tiempo aun no corre.
         Arrays.fill(transitionTime, -1);
         transitionTime[0] = System.currentTimeMillis();
+        maxInvariant = max;
     }
 
     private final RealMatrix incidence = MatrixUtils.createRealMatrix(incidenceMatrix);
     private RealVector marking = new ArrayRealVector(initialMarking);
     private final RealVector transition = new ArrayRealVector(transitionMatrix);
 
-
     public boolean isEnabled(int a){
+
+        if (a==0 && firedCount[0] >= maxInvariant){ //al llegar a los 200 disparos no permitir seguir disparando la T0.
+            return false;
+        }
+
         if(a>=0 && a< transition.getDimension()) {
             RealVector adisparar = transition.copy();
             adisparar.setEntry(a, 1);
@@ -140,18 +147,22 @@ public class Rdp {
         }
     }
 
-    public void printCounter(){ //este valor siempre va a ser mayor al numero de invariantes deseados debido a que la red 
-        //se sigue disparando hasta que se paran todos los hilos.
-            System.out.print("Contador del balanceo de la politica: ");
-            System.out.print(firedCount[11]);
-            System.out.print(" , ");
-            System.out.print(firedCount[12]);
-            System.out.println();
+    public int getMarking(int place){
+        return ((int)marking.getEntry(place));
     }
 
-    public String counterString(){
-        return ("Contador del balanceo de la política: "+ firedCount[11]+" , "+ firedCount[12]);
-    }
+    // public void printCounter(){ //este valor siempre va a ser mayor al numero de invariantes deseados debido a que la red 
+    //     //se sigue disparando hasta que se paran todos los hilos.
+    //         System.out.print("Contador del balanceo de la politica: ");
+    //         System.out.print(firedCount[11]);
+    //         System.out.print(" , ");
+    //         System.out.print(firedCount[12]);
+    //         System.out.println();
+    // }
+
+    // public String counterString(){
+    //     return ("Contador del balanceo de la política: "+ firedCount[11]+" , "+ firedCount[12]);
+    // }
 
     private void testPlaceInvariant(){
         boolean p1, p2, p3, p4, p5, p6, p7, p8;
@@ -182,5 +193,16 @@ public class Rdp {
 
     public String getSequence(){
         return sequence;
+    }
+
+    public Boolean completedInvariants(){
+        if (firedCount[16] == maxInvariant){
+            return true;
+        }
+        else return false;
+    }
+
+    public int[] getFiredCounter(){
+        return firedCount;
     }
 }

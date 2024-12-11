@@ -1,70 +1,178 @@
 package main;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class Main {
     public static void main(String[] args) {
+        
+        int maxFiresForT0 = 2; // Límite máximo de disparos para la transición 0
+        Policy policy = new Policy(true);
 
-        final int setpolitica = 1;     //politica 1 es 50/50, 2 es 80/20
-        final int numerodeimagenesaprocesar = 200;  //numero de invariantes que buscamos
-        final int numhilos1 = 2;    //cargador, ajustador 
-        final int numhilos2 = 1;    //creador, exportador, recortador
+        int creatorThreads = 1;
+        int loaderThreadsLeft = 1;
+        int loaderThreadsRight = 1;
+        int adjustersThreadsLeft = 1;
+        int adjustersThreadsRight = 1;
+        int trimmersThreads = 1;
+        int exportersThreads = 1;
 
-        //agregar un check flag a exportador andtes de llamar a la bandera
+        List<Integer> creator = new ArrayList();
+        creator.add(0);
+        List<Integer> LL = new ArrayList();
+        LL.add(1);
+        LL.add(3);
+        List<Integer> LR = new ArrayList();
+        LR.add(2);
+        LR.add(4);
+        List<Integer> AL = new ArrayList();
+        AL.add(5);
+        AL.add(7);
+        AL.add(9);
+        List<Integer> AR = new ArrayList();
+        AR.add(6);
+        AR.add(8);
+        AR.add(10);
+        List<Integer> T = new ArrayList();
+        T.add(11);
+        T.add(12);
+        T.add(13);
+        T.add(14);
+        List<Integer> E = new ArrayList();
+        E.add(15);
+        E.add(16);
 
-    //     Politic politic = new Politic(setpolitica);
-    //     Monitor monitor = new Monitor(politic);
 
-    //     Creator[] creator = new Creator[numhilos2];
-    //     Thread[] threadCreador = new Thread[numhilos2];
+        Rdp rdp = new Rdp(maxFiresForT0);
+        Monitor monitor = new Monitor(rdp, policy);
 
-    //     Loader[] cargadores = new Loader[numhilos1];
-    //     Thread[] threadCargadores = new Thread[numhilos1];
+        Threads[] creators = new Threads[creatorThreads];
+        Threads[] loadersLeft = new Threads[loaderThreadsLeft];
+        Threads[] loadersRight = new Threads[loaderThreadsRight];
+        Threads[] adjustersLeft = new Threads[adjustersThreadsLeft];
+        Threads[] adjustersRight = new Threads[adjustersThreadsRight];
+        Threads[] trimmers = new Threads[trimmersThreads];
+        Threads[] exporters = new Threads[exportersThreads];
 
-    //     Adjuster[] ajustadores = new Adjuster[numhilos1];
-    //     Thread[] threadAjustadores = new Thread[numhilos1];
+        // for (int i = 0; i < creatorThreads; i++){
+        //     creators[i] = new Threads(Arrays.asList(0), monitor);
+        //     creators[i].setName("Creator " + i);
+        // }
 
-    //     Trimmer[] recortadores = new Trimmer[numhilos2];
-    //     Thread[] threadRecortadores = new Thread[numhilos2];
+        // for (int i = 0; i < loaderThreadsLeft; i++){
+        //     loadersLeft[i] = new Threads(Arrays.asList(1,3), monitor);
+        //     loadersLeft[i].setName("Loader left " + i);
+        // }
 
-    //     Exporter[] exporter = new Exporter[numhilos2];
-    //     Thread[] threadExportador = new Thread[numhilos2];
+        // for (int i = 0; i < loaderThreadsRight; i++){
+        //     loadersRight[i] = new Threads(Arrays.asList(2,4), monitor);
+        //     loadersRight[i].setName("Loader right " + i);
+        // }
 
-    //     for(int i = 0; i < numhilos1; i++){
-    //         cargadores[i] = new Loader(monitor);
-    //         threadCargadores[i] = new Thread(cargadores[i]);
-    //         threadCargadores[i].setName("Cargador: " + i);
+        // for (int i = 0; i < adjustersThreadsLeft; i++){
+        //     adjustersLeft[i] = new Threads(Arrays.asList(5,7,9), monitor);
+        //     adjustersLeft[i].setName("Adjuster left " + i);
+        // }
 
-    //         ajustadores[i] = new Adjuster(monitor);
-    //         threadAjustadores[i] = new Thread(ajustadores[i]);
-    //         threadAjustadores[i].setName("Ajustador: " + i);
-    //     }
+        // for (int i = 0; i < adjustersThreadsRight; i++){
+        //     adjustersRight[i] = new Threads(Arrays.asList(6,8,10), monitor);
+        //     adjustersRight[i].setName("Adjuster right " + i);
+        // }
 
-    //     for(int i = 0; i < numhilos2; i++){
-    //         creator[i] = new Creator(monitor, numerodeimagenesaprocesar);
-    //         threadCreador[i] = new Thread(creator[i]);
-    //         threadCreador[i].setName("Creador: " + i);
+        // for (int i = 0; i < trimmersThreads; i++){
+        //     trimmers[i] = new Threads(Arrays.asList(11,12,13,14), monitor);
+        //     trimmers[i].setName("Trimmers " + i);
+        // }
 
-    //         exporter[i] = new Exporter(monitor, numerodeimagenesaprocesar);
-    //         threadExportador[i] = new Thread(exporter[i]);
-    //         threadExportador[i].setName("Exportador: " + i);
+        // for (int i = 0; i < exportersThreads; i++){
+        //     exporters[i] = new Threads(Arrays.asList(15,16), monitor);
+        //     exporters[i].setName("Trimmers " + i);
+        // }
 
-    //         recortadores[i] = new Trimmer(monitor);
-    //         threadRecortadores[i] = new Thread(recortadores[i]);
-    //         threadRecortadores[i].setName("Recortador: " + i);
-    //     }
+        for (int i = 0; i < creatorThreads; i++){
+            creators[i] = new Threads(creator, monitor);
+            creators[i].setName("Creator " + i);
+        }
 
-    //     Log log = new Log(threadCreador, threadCargadores, threadAjustadores, threadRecortadores, threadExportador, monitor);
-    //     new Thread(log).start();
+        for (int i = 0; i < loaderThreadsLeft; i++){
+            loadersLeft[i] = new Threads(LL, monitor);
+            loadersLeft[i].setName("Loader left " + i);
+        }
 
-    //     for(int i = 0; i < numhilos1; i++){
-    //         threadCargadores[i].start();
-    //         threadAjustadores[i].start();
-    //     }
+        for (int i = 0; i < loaderThreadsRight; i++){
+            loadersRight[i] = new Threads(LR, monitor);
+            loadersRight[i].setName("Loader right " + i);
+        }
 
-    //     for(int i = 0; i < numhilos2; i++){
-    //         threadCreador[i].start();
-    //         threadExportador[i].start();
-    //         threadRecortadores[i].start();
-    //     }
+        for (int i = 0; i < adjustersThreadsLeft; i++){
+            adjustersLeft[i] = new Threads(AL, monitor);
+            adjustersLeft[i].setName("Adjuster left " + i);
+        }
+
+        for (int i = 0; i < adjustersThreadsRight; i++){
+            adjustersRight[i] = new Threads(AR, monitor);
+            adjustersRight[i].setName("Adjuster right " + i);
+        }
+
+        for (int i = 0; i < trimmersThreads; i++){
+            trimmers[i] = new Threads(T, monitor);
+            trimmers[i].setName("Trimmers " + i);
+        }
+
+        for (int i = 0; i < exportersThreads; i++){
+            exporters[i] = new Threads(E, monitor);
+            exporters[i].setName("Trimmers " + i);
+        }
+
+
+        for (int i = 0; i < creatorThreads; i++){
+            creators[i].start();
+        }
+
+        for (int i = 0; i < loaderThreadsLeft; i++){
+            loadersLeft[i].start();
+        }
+
+        for (int i = 0; i < loaderThreadsRight; i++){
+            loadersRight[i].start();
+        }
+
+        for (int i = 0; i < adjustersThreadsLeft; i++){
+            adjustersLeft[i].start();
+        }
+
+        for (int i = 0; i < adjustersThreadsRight; i++){
+            adjustersRight[i].start();
+        }
+
+        for (int i = 0; i < trimmersThreads; i++){
+            trimmers[i].start();
+        }
+
+        for (int i = 0; i < exportersThreads; i++){
+            exporters[i].start();
+        }
+
+
+        // Crear hilos con grupos de transiciones
+        // Threads thread1 = new Threads(Arrays.asList(0), monitor);
+        // Threads thread2 = new Threads(Arrays.asList(1,3), monitor);
+        // Threads thread3 = new Threads(Arrays.asList(2,4), monitor);
+        // Threads thread4 = new Threads(Arrays.asList(5,7,9), monitor);
+        // Threads thread5 = new Threads(Arrays.asList(6,8,10), monitor);
+        // Threads thread6 = new Threads(Arrays.asList(11,12,13,14), monitor);
+        // Threads thread7 = new Threads(Arrays.asList(15,16), monitor);
+
+        // Iniciar los hilos
+        // thread1.start();
+        // thread2.start();
+        // thread3.start();
+        // thread4.start();
+        // thread5.start();
+        // thread6.start();
+        // thread7.start();
+
     }
-}
 
+}

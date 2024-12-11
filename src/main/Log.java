@@ -7,17 +7,17 @@ import java.util.Date;
 
 public class Log implements Runnable {
     int count;
-    Thread[] threadCreator;
-    Thread[] threadLoader;
-    Thread[] threadAdjusters;
-    Thread[] threadTrimmers;
-    Thread[] threadExporters;
+    Threads[] threadCreator;
+    Threads[] threadLoader;
+    Threads[] threadAdjusters;
+    Threads[] threadTrimmers;
+    Threads[] threadExporters;
     Monitor monitor;
     File file;
     File file1;
     final Long INITIAL_TIME = System.currentTimeMillis();
     
-    public Log(Thread[] threadCreator, Thread[] threadLoader, Thread[] threadAdjusters, Thread[] threadTrimmers, Thread[] threadExporters, Monitor monitor){
+    public Log(Threads[] threadCreator, Threads[] threadLoader, Threads[] threadAdjusters, Threads[] threadTrimmers, Threads[] threadExporters, Monitor monitor){
         this.threadCreator = threadCreator;
         this.threadLoader = threadLoader;
         this.threadAdjusters = threadAdjusters;
@@ -64,11 +64,11 @@ public class Log implements Runnable {
 
     @Override
     public void run() {
-        while (!monitor.isReadyToFinish()){
+        while (!monitor.areInvariantsCompleted()){
             try {
                 writeFile();
                 this.count++;
-                Thread.sleep(500);
+                Threads.sleep(500);
             }
             catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -87,26 +87,26 @@ public class Log implements Runnable {
             try {
                 Long currentTime = System.currentTimeMillis();
                 writer.write("Iteración: " + count + " tiempo: " + (currentTime - INITIAL_TIME) + "ms\n");
-                writer.write("Imagenes creadas: " + monitor.getBufferP0() +"\n");
-                writer.write("Imagenes cargadas: "+ monitor.getBufferP6() +"\n");
-                writer.write("Imagenes ajustadas: "+ monitor.getBufferP14() +"\n");
-                writer.write("Imagenes recortadas: "+ monitor.getBufferP18() +"\n");
-                writer.write("Imagenes exportadas: "+ monitor.getBufferExported() +"\n");
-                writer.write(monitor.getBalanceCount() +"\n");
+                writer.write("Imagenes creadas: "+ monitor.getRdp().getMarking(0) +"\n");
+                writer.write("Imagenes cargadas: "+ monitor.getRdp().getMarking(6) +"\n");
+                writer.write("Imagenes ajustadas: "+ monitor.getRdp().getMarking(14) +"\n");
+                writer.write("Imagenes recortadas: "+ monitor.getRdp().getMarking(18) +"\n");
+                writer.write("Imagenes exportadas: "+ monitor.getRdp().getFiredCounter()[16] +"\n");
+                //writer.write(monitor.getBalanceCount() +"\n");
 
-                for (Thread thread: threadCreator){
+                for (Threads thread: threadCreator){
                     writer.write("Hilo: "+thread.getName() +". Estado: "+thread.getState()+"\n");
                 }
-                for (Thread thread: threadLoader){
+                for (Threads thread: threadLoader){
                     writer.write("Hilo: "+thread.getName() +". Estado: "+thread.getState()+"\n");
                 }
-                for (Thread thread: threadAdjusters){
+                for (Threads thread: threadAdjusters){
                     writer.write("Hilo: "+thread.getName() +". Estado: "+thread.getState()+"\n");
                 }
-                for (Thread thread: threadTrimmers){
+                for (Threads thread: threadTrimmers){
                     writer.write("Hilo: "+thread.getName() +". Estado: "+thread.getState()+"\n");
                 }
-                for (Thread thread: threadExporters){
+                for (Threads thread: threadExporters){
                     writer.write("Hilo: "+thread.getName() +". Estado: "+thread.getState()+"\n");
                 }
                 writer.write("\n\n");
@@ -126,7 +126,7 @@ public class Log implements Runnable {
         try {
             FileWriter writer = new FileWriter(file, true);
             try {
-                writer.write("Secuencia: "+ monitor.getSecuence() +"\n");
+                writer.write("Secuencia: "+ monitor.getRdp().getSequence() +"\n");
                 
                 writer.write("\n\n");
             }
@@ -145,7 +145,7 @@ public class Log implements Runnable {
         try {
             FileWriter writer = new FileWriter(file1, false);
             try {
-                writer.write(monitor.getSecuence()+"\n");
+                writer.write(monitor.getRdp().getSequence()+"\n");
                 }
             catch (IOException e){
                 System.out.println("Problema al escribir en el archivo de LOG.");
