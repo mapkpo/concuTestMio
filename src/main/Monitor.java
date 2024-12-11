@@ -1,5 +1,5 @@
 package main;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,21 +25,21 @@ public class Monitor {
             List<Integer> toTry = rdp.whichEnabled();
             System.out.println("las enableadas "+ toTry.size());
 
-            for (int i=0; i<toTry.size(); i++){
-                System.out.println(toTry.get(i));
-            }
+            // for (int i=0; i<toTry.size(); i++){
+            //     System.out.println("dmdjdjjd "+toTry.get(i));
+            // }
 
-            toTry.retainAll(transitions);
+            transitions.retainAll(toTry);
 
-            int number = policy.decide(toTry);
-            System.out.println("aca ta la cagá "+number);
+            int number = policy.decide(transitions);
+            //System.out.println("aca ta la cagá "+number);
 
             if (rdp.isEnabled(number)) {
                 System.out.println("Firing transition: T" + number);
                 rdp.fire(number);
                 return true;
             } else {
-                System.out.println("Transition T" + number + " is not enabled.");
+                //System.out.println("Transition T" + number + " is not enabled.");
                 return false;
             }
         } finally {
