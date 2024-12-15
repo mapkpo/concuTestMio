@@ -15,7 +15,7 @@ public class Policy {
         Random rand = new Random();
         double probability = rand.nextDouble();
 
-        if (transitions.contains(11) || transitions.contains(12)){
+        if (transitions.contains(11) && transitions.contains(12)){
 
             //System.out.println("entro aca");
             if (policyTypeEquitative == true){
@@ -32,6 +32,9 @@ public class Policy {
         }   
         
         //Random randd = new Random();
+        if (transitions.size() == 1){
+            return transitions.get(0);
+        }
         int randomIndex = rand.nextInt(transitions.size());
         //System.out.println(" sizeeee" + transitions.size());
         //System.out.println(" politica decide: "+transitions.get(randomIndex));

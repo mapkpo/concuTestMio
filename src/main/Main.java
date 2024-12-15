@@ -1,13 +1,12 @@
 package main;
 import java.util.ArrayList;
-
 import java.util.List;
 
 
 public class Main {
     public static void main(String[] args) {
         
-        int maxFiresForT0 = 2; // Límite máximo de disparos para la transición 0
+        int maxFiresForT0 = 5; // Límite máximo de disparos para la transición 0
         Policy policy = new Policy(true);
 
         int creatorThreads = 1;

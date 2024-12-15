@@ -44,6 +44,10 @@ public class Rdp {
     List<Integer> transitionSleepTime = Collections.unmodifiableList
             (Arrays.asList(0, 0, 0, 100, 100, 0, 0, 100, 100, 100, 100, 0, 0, 100, 100, 0, 100));
 
+    // List<Integer> transitionSleepTime = Collections.unmodifiableList
+    //         (Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+
+
     private final long[] transitionTime = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     private int[] firedCount = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -91,24 +95,32 @@ public class Rdp {
     public List<Integer> whichEnabled() {
         List<Integer> lista = new ArrayList<>();
 
-        for (int i = 0; i < transition.getDimension(); i++) {
-            RealVector aprobar = transition.copy();
-            aprobar.setEntry(i, 1);
-
-            int contador = 0;
-
-            RealVector result = incidence.operate(aprobar).add(marking);
-            for (int j = 0; j < result.getDimension(); j++) {
-                if (result.getEntry(j) < 0) {
-                    //System.out.println("Fuera de rango");
-                    contador++;
-                }
-            }
-            if (contador == 0){
+        for (int i=0; i<17; i++){
+            if(isEnabled(i)==true){
                 lista.add(i);
             }
         }
+
         return lista;
+
+        // for (int i = 0; i < transition.getDimension(); i++) {
+        //     RealVector aprobar = transition.copy();
+        //     aprobar.setEntry(i, 1);
+
+        //     int contador = 0;
+
+        //     RealVector result = incidence.operate(aprobar).add(marking);
+        //     for (int j = 0; j < result.getDimension(); j++) {
+        //         if (result.getEntry(j) < 0) {
+        //             //System.out.println("Fuera de rango");
+        //             contador++;
+        //         }
+        //     }
+        //     if (contador == 0){
+        //         lista.add(i);
+        //     }
+        // }
+        // return lista;
     }
 
     public void fire(int a){
